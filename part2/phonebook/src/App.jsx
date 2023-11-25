@@ -15,8 +15,8 @@ const App = () => {
   const [notification, setNotification] = useState(null);
 
   useEffect(() => {
-    axios.get("http://localhost:3001/persons").then((response) => {
-      setPersons(response.data);
+    personsService.get().then((response) => {
+      setPersons(response);
     });
   }, []);
 
@@ -33,8 +33,8 @@ const App = () => {
       return;
     }
     const nameAlereadyExists = persons
-      .map((person) => person.name)
-      .includes(newName);
+      .map((person) => person.name.toLowerCase())
+      .includes(newName.toLowerCase());
     const numberAlreadyExists = persons
       .map((person) => person.number)
       .includes(newNumber);
@@ -44,7 +44,9 @@ const App = () => {
           `${newName} is already added to phonebook. Do you want to update the phone number?`
         )
       ) {
-        const person = persons.find((person) => person.name === newName);
+        const person = persons.find(
+          (person) => person.name.toLowerCase() === newName.toLowerCase()
+        );
         const updatedPerson = {
           name: newName,
           number: newNumber,
