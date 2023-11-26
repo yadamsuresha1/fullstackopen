@@ -70,7 +70,7 @@ const App = () => {
           .catch((error) => {
             console.log("error", error);
             setNotification({
-              message: `Information of ${newName} has already been removed from the server`,
+              message: error.response.data.error,
               status: "error",
             });
             setTimeout(() => {
@@ -89,18 +89,27 @@ const App = () => {
         id: persons.length + 1,
       };
 
-      personsService.add(newPerson).then((response) => {
-        console.log("added", response);
-        setNotification({
-          message: `${newName} added to the phonebook successfully!`,
-          status: "success",
+      personsService
+        .add(newPerson)
+        .then((response) => {
+          console.log("added", response);
+          setNotification({
+            message: `${newName} added to the phonebook successfully!`,
+            status: "success",
+          });
+          setTimeout(() => {
+            setNotification(null);
+          }, 3000);
+          setPersons(persons.concat(response));
+          resetPerson();
+        })
+        .catch((err) => {
+          console.log("error", err);
+          setNotification({
+            message: err.response.data.error,
+            status: "error",
+          });
         });
-        setTimeout(() => {
-          setNotification(null);
-        }, 3000);
-        setPersons(persons.concat(response));
-        resetPerson();
-      });
     }
   };
 
